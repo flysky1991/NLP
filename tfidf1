@@ -1,0 +1,44 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Aug 31 22:48:55 2017
+
+@author: Administrator
+"""
+
+from math import log
+
+
+#tf计算
+def tf(word,doc):
+    all_num = sum([doc[key] for key in doc])
+    return float(doc[word]) / all_num
+
+#idf计算
+def idf(word,doc_list):
+    all_num = len(doc_list)
+    word_count = 0
+    for doc in doc_list:
+        if word in doc:
+            word_count += 1
+    return log(all_num/word_count)
+
+#tfdif计算(tfidf = tf * idf)
+def tfidf(word,doc,doc_list):
+    score = tf(word,doc)*idf(word,doc_list)
+    return score
+
+if __name__ == '__main__':
+    
+    doc1 = {'at':16,'tell':132,'soft':42,'let':53,'this':32}
+    doc2 = {'tell':53,'be':46,'tea':43,'what':46,'foot':65,'hack':32}
+    doc3 = {'soft':65,'this':67,'tell':78,'how':124,'foot':54}
+    
+    doc_list = [doc1,doc2,doc3]
+    i = 1
+    for doc in doc_list:
+        print('-'*30)
+        print("doc{}中各单词的tfidf值:".format(i))
+        #循环输出每个文档中每个单词的tfidf值
+        for word in doc:
+            print('"{}":{}'.format(word,tfidf(word,doc,doc_list)))
+        i += 1
