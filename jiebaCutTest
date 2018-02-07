@@ -1,0 +1,52 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Feb  7 11:23:27 2018
+
+@author: zch
+"""
+
+import pandas as pd
+import pymysql.cursors
+import re
+import jieba
+
+
+'''
+数据库操作
+'''
+
+#获取数据库链接
+connection  = pymysql.connect(host = 'localhost',
+                          user = 'root',
+                          password = '123456',
+                          db = 'tmall',
+                          charset = 'utf8mb4')
+try:
+    #获取会话指针
+    with connection.cursor() as cursor:
+        #创建sql语句
+        sql = "select * from `HonorV10_Comment` limit 3000"
+
+        #执行sql语句
+        cursor.execute(sql)
+        data = cursor.fetchall()
+        #print(data[1000])
+        #print(data[1][1])
+        #提交数据库
+        connection.commit()
+finally:
+    connection.close()
+    
+f1 = open("tmall_review.txt",'a') 
+for i in range(0,3000):
+    line = data[i][3]
+    print(line)
+    # 中文的编码范围是：\u4e00到\u9fa5 
+    p2 = re.compile(r'[^\u4e00-\u9fa5]')  
+    result = " ".join(p2.split(line)).strip() 
+    #line.replace('\t','').replace('\n','').replace(' ','')
+    cutline = jieba.cut(result,cut_all=False)
+    f1.write(" ".join(cutline))
+
+f1.close()
+    
